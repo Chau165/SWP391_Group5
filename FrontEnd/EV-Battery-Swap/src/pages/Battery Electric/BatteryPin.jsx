@@ -2,236 +2,100 @@ import React, { useState } from 'react';
 import './BatteryPin.css';
 
 export default function BatteryPin() {
-  const [activeTab, setActiveTab] = useState('basic');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedBatteryIndex, setSelectedBatteryIndex] = useState(null);
+
+  const handleBatteryClick = (index) => {
+    setSelectedBatteryIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedBatteryIndex(null);
+  };
 
   return (
     <div className="battery-pin-page">
-      {/* Hero Section - Giới thiệu sản phẩm */}
-      <section className="battery-hero">
-        <div className="hero-content">
-          <h1>Pin Xe Máy Điện Thông Minh</h1>
-          <p>Công nghệ pin lithium-ion tiên tiến với khả năng sạc nhanh, tuổi thọ cao và độ an toàn tuyệt đối. Trải nghiệm di chuyển xanh, sạch và bền vững.</p>
+      {/* Main Container */}
+      <div className="gogoro-container">
+        {/* Background Video */}
+        <video 
+          className="background-video"
+          autoPlay 
+          muted 
+          loop 
+          playsInline
+        >
+          <source src="/Pin.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        
+        {/* Left Side - Text Content */}
+        <div className="text-content">
+          <h1>Always quick. Always ready.</h1>
+          <p>GoStation Sites make swapping batteries a breeze. Way cleaner than gas. Infinitely faster than charging. Full batteries are ready when you are. No waiting. No fumes. No fuss.</p>
         </div>
-      </section>
 
-      {/* Product Introduction Section */}
-      <section className="product-intro">
-        <div className="container">
-          <h2 className="section-title">Giới Thiệu Sản Phẩm Pin</h2>
-          <div className="product-showcase">
-            <div className="product-images">
-              <div className="main-image">
-                <img src="/batterypin3.jpg" alt="Pin xe máy điện thông minh" />
+        {/* Right Side - Battery Station */}
+        <div className="station-container">
+          {/* Battery Grid */}
+          <div className="battery-grid">
+            {[...Array(18)].map((_, index) => (
+              <div 
+                key={index} 
+                className="battery-slot"
+                onClick={() => handleBatteryClick(index)}
+                style={{'--i': index}}
+              >
+                <div className="battery-inner"></div>
               </div>
-              <div className="secondary-image">
-                <img src="/batterypin.jpg" alt="Pin xe máy điện cao cấp" />
-              </div>
-            </div>
-            <div className="product-details">
-              <h3>Pin Lithium-ion Thế Hệ Mới</h3>
-              <div className="specs-grid">
-                <div className="spec-item">
-                  <span className="spec-label">Dung lượng:</span>
-                  <span className="spec-value">48V - 20Ah</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Thời gian sạc:</span>
-                  <span className="spec-value">3-4 giờ</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Quãng đường:</span>
-                  <span className="spec-value">80-120 km</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-label">Tuổi thọ:</span>
-                  <span className="spec-value">1000+ chu kỳ</span>
-                </div>
-              </div>
-              <div className="features-list">
-                <h4>Tính Năng Nổi Bật:</h4>
-                <ul>
-                  <li>Công nghệ BMS (Battery Management System) thông minh</li>
-                  <li>Chống nước IP67, an toàn tuyệt đối</li>
-                  <li>Sạc nhanh với công nghệ Quick Charge</li>
-                  <li>Thiết kế nhỏ gọn, dễ dàng tháo lắp</li>
-                  <li>Hệ thống giám sát từ xa qua GPS</li>
-                </ul>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Services Section */}
-      <section className="services-section">
-        <div className="container">
-          <h2 className="section-title">Dịch Vụ & Chính Sách Thuê Pin</h2>
+      {/* Benefits Section */}
+      <div className="benefits-section">
+        <div className="benefits-container">
+          <h2 className="benefits-title">Lợi ích của thuê pin</h2>
           
-          {/* Service Plans */}
-          <div className="pricing-section">
-            <div className="pricing-tabs">
-              <button 
-                className={`tab-button ${activeTab === 'basic' ? 'active' : ''}`}
-                onClick={() => setActiveTab('basic')}
-              >
-                Gói Cơ Bản
-              </button>
-              <button 
-                className={`tab-button ${activeTab === 'premium' ? 'active' : ''}`}
-                onClick={() => setActiveTab('premium')}
-              >
-                Gói Cao Cấp
-              </button>
-              <button 
-                className={`tab-button ${activeTab === 'vip' ? 'active' : ''}`}
-                onClick={() => setActiveTab('vip')}
-              >
-                Gói VIP
-              </button>
+          <div className="benefits-grid">
+            <div className="benefit-card">
+              <div className="benefit-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 3.5C14.8 3.4 14.6 3.3 14.4 3.3C14.2 3.3 14 3.4 13.8 3.5L9 6.2L7 5.4V7.6L9.2 8.5L13 6.7L18 9.6V22H8V9C8 7.9 8.9 7 10 7H12C13.1 7 14 7.9 14 9V10H16V9C16 6.8 14.2 5 12 5H10C7.8 5 6 6.8 6 9V22H4V24H20V22H18V9H21Z"/>
+                </svg>
+              </div>
+              <h3>Không tốn chi phí mua, không chịu rủi ro về pin</h3>
+              <p>Với chi phí thuê pin hợp lý.</p>
             </div>
 
-            <div className="pricing-content">
-              {activeTab === 'basic' && (
-                <div className="pricing-plan">
-                  <h3>Gói Cơ Bản</h3>
-                  <div className="price">1.500.000 VNĐ<span>/tháng</span></div>
-                  <div className="plan-features">
-                    <p>✓ Thuê pin 48V - 20Ah</p>
-                    <p>✓ Bảo trì, sửa chữa miễn phí</p>
-                    <p>✓ Hỗ trợ kỹ thuật 24/7</p>
-                    <p>✓ Thay thế pin hỏng trong 24h</p>
-                    <p>✓ Không giới hạn quãng đường</p>
-                  </div>
-                </div>
-              )}
-              
-              {activeTab === 'premium' && (
-                <div className="pricing-plan featured">
-                  <h3>Gói Cao Cấp</h3>
-                  <div className="price">2.200.000 VNĐ<span>/tháng</span></div>
-                  <div className="plan-features">
-                    <p>✓ Thuê pin 48V - 30Ah (dung lượng cao)</p>
-                    <p>✓ Tất cả tính năng gói cơ bản</p>
-                    <p>✓ Ưu tiên hỗ trợ kỹ thuật</p>
-                    <p>✓ Pin dự phòng miễn phí</p>
-                    <p>✓ Bảo hiểm toàn diện</p>
-                    <p>✓ Ứng dụng theo dõi pin thông minh</p>
-                  </div>
-                </div>
-              )}
-              
-              {activeTab === 'vip' && (
-                <div className="pricing-plan">
-                  <h3>Gói VIP</h3>
-                  <div className="price">3.500.000 VNĐ<span>/tháng</span></div>
-                  <div className="plan-features">
-                    <p>✓ Thuê pin 60V - 40Ah (cao cấp nhất)</p>
-                    <p>✓ Tất cả tính năng gói cao cấp</p>
-                    <p>✓ Dịch vụ giao nhận pin tận nơi</p>
-                    <p>✓ Ưu tiên cao nhất mọi dịch vụ</p>
-                    <p>✓ Quà tặng và ưu đãi đặc biệt</p>
-                    <p>✓ Hệ thống giám sát GPS cao cấp</p>
-                  </div>
-                </div>
-              )}
+            <div className="benefit-card">
+              <div className="benefit-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.5 2C13.81 2 15.04 2.5 15.95 3.41C16.86 4.32 17.36 5.55 17.36 6.86C17.36 8.17 16.86 9.4 15.95 10.31L15.54 10.72L14.83 10.01C14.39 9.57 13.96 9.04 13.55 8.42C13.14 7.8 12.75 7.09 12.38 6.29C12.01 5.49 11.66 4.6 11.33 3.62C11.6 2.65 12.03 2 12.5 2M8.5 6C8.78 6 9 6.22 9 6.5S8.78 7 8.5 7 8 6.78 8 6.5 8.22 6 8.5 6M12 11.5C11.5 12 11 12.5 10.5 13C10 13.5 9.5 14 9 14.5L8.5 15L8 15.5L7.5 16L7 16.5C6.5 17 6 17.5 5.5 18L5 18.5L4.5 19L4 19.5L3.5 20L3 20.5L2.5 21L2 21.5L1.5 22L2.5 23L3.5 22L4.5 21L5.5 20L6.5 19L7.5 18L8.5 17L9.5 16L10.5 15L11.5 14L12.5 13L13.5 12L14.5 11L15.5 10L16.5 9L17.5 8L18.5 7L19.5 6L20.5 5L21.5 4L22.5 3L21.5 2L12 11.5Z"/>
+                </svg>
+              </div>
+              <h3>Sạc pin tại hệ thống trạm sạc rộng khắp của VinFast</h3>
+            </div>
+
+            <div className="benefit-card">
+              <div className="benefit-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5C16 11.11 15.41 12.59 14.44 13.73L14.71 14H15.5L20.5 19L19 20.5L14 15.5V14.71L13.73 14.44C12.59 15.41 11.11 16 9.5 16A6.5 6.5 0 0 1 3 9.5A6.5 6.5 0 0 1 9.5 3M9.5 5C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/>
+                </svg>
+              </div>
+              <h3>Nhận được sự hỗ trợ tốt nhất từ VinFast nhờ công nghệ quản lý pin tiên tiến.</h3>
             </div>
           </div>
 
-          {/* Service Benefits */}
-          <div className="service-benefits">
-            <h3>Lợi Ích Dịch Vụ Thuê Pin</h3>
-            <div className="benefits-grid">
-              <div className="benefit-card">
-                <div className="benefit-icon">�</div>
-                <h4>Tiết Kiệm Chi Phí</h4>
-                <p>Không cần đầu tư ban đầu cho pin, giảm 50% chi phí so với mua pin mới.</p>
-              </div>
-              <div className="benefit-card">
-                <div className="benefit-icon">🔄</div>
-                <h4>Luôn Mới</h4>
-                <p>Pin được thay thế định kỳ, đảm bảo hiệu suất luôn ở mức tối ưu.</p>
-              </div>
-              <div className="benefit-card">
-                <div className="benefit-icon">�️</div>
-                <h4>Bảo Trì Toàn Diện</h4>
-                <p>Dịch vụ bảo trì, sửa chữa chuyên nghiệp với đội ngũ kỹ thuật viên giàu kinh nghiệm.</p>
-              </div>
-              <div className="benefit-card">
-                <div className="benefit-icon">📱</div>
-                <h4>Theo Dõi Thông Minh</h4>
-                <p>Ứng dụng di động giúp theo dõi tình trạng pin, lịch sử sử dụng và thông báo bảo trì.</p>
-              </div>
-            </div>
+          {/* Battery Compartment Image */}
+          <div className="battery-compartment">
+            <img src="/batterypin1.jpg" alt="Battery Compartment" />
           </div>
         </div>
-      </section>
-
-      {/* Regulations Section */}
-      <section className="regulations-section">
-        <div className="container">
-          <h2 className="section-title">Quy Định Về Pin</h2>
-          
-          <div className="regulations-content">
-            <div className="regulation-category">
-              <h3>Quy Định An Toàn</h3>
-              <ul>
-                <li>Không được tự ý tháo rời, sửa chữa pin khi chưa có sự cho phép của kỹ thuật viên</li>
-                <li>Tránh để pin tiếp xúc với nước, độ ẩm cao hoặc nhiệt độ quá nóng (trên 60°C)</li>
-                <li>Sử dụng đúng bộ sạc chính hãng, không sạc pin quá 8 tiếng liên tục</li>
-                <li>Báo ngay cho trung tâm khi phát hiện pin có hiện tượng sưng, nóng bất thường</li>
-                <li>Không để pin cạn hoàn toàn (dưới 20%) trong thời gian dài</li>
-              </ul>
-            </div>
-
-            <div className="regulation-category">
-              <h3>Quy Định Sử Dụng</h3>
-              <ul>
-                <li>Khách hàng có trách nhiệm bảo quản pin cẩn thận, tránh va đập mạnh</li>
-                <li>Thông báo trước 24h khi muốn tạm ngừng dịch vụ hoặc chuyển đổi gói</li>
-                <li>Pin chỉ được sử dụng cho xe máy điện tương thích, không sử dụng cho mục đích khác</li>
-                <li>Tuân thủ lịch bảo trì định kỳ theo khuyến nghị của kỹ thuật viên</li>
-                <li>Cài đặt và sử dụng ứng dụng theo dõi pin theo hướng dẫn</li>
-              </ul>
-            </div>
-
-            <div className="regulation-category">
-              <h3>Quy Định Bồi Thường</h3>
-              <ul>
-                <li>Trường hợp pin bị hư hỏng do lỗi của khách hàng: Bồi thường 70% giá trị pin</li>
-                <li>Pin bị mất cắp: Bồi thường 100% giá trị pin tại thời điểm thuê</li>
-                <li>Sử dụng pin không đúng mục đích: Phạt 5.000.000 VNĐ và chấm dứt hợp đồng</li>
-                <li>Chậm báo cáo sự cố: Phạt 500.000 VNĐ/ngày chậm báo cáo</li>
-                <li>Vi phạm quy định an toàn: Phạt từ 1.000.000 - 3.000.000 VNĐ tùy mức độ</li>
-              </ul>
-            </div>
-
-            <div className="regulation-category">
-              <h3>Quy Định Bảo Hành</h3>
-              <ul>
-                <li>Pin được bảo hành toàn diện trong suốt thời gian thuê</li>
-                <li>Thay thế pin miễn phí khi dung lượng giảm xuống dưới 80% so với ban đầu</li>
-                <li>Hỗ trợ kỹ thuật 24/7 qua hotline: 1900-xxxx</li>
-                <li>Thời gian phản hồi: Trong vòng 2 giờ kể từ khi nhận được yêu cầu</li>
-                <li>Dịch vụ giao pin thay thế tại nhà trong vòng 24 giờ</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="container">
-          <div className="cta-content">
-            <h2>Bắt Đầu Trải Nghiệm Ngay Hôm Nay</h2>
-            <p>Đăng ký dịch vụ thuê pin và nhận ưu đãi đặc biệt cho khách hàng mới</p>
-            <div className="cta-buttons">
-              <button className="btn-primary">Đăng Ký Ngay</button>
-              <button className="btn-secondary">Tư Vấn Miễn Phí</button>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 }
