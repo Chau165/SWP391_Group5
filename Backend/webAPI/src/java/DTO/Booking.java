@@ -37,6 +37,7 @@ public class Booking {
         this.Qr_Code = Qr_Code;
         this.Booking_Time = Booking_Time;
         this.Expired_Date = Expired_Date;
+        
     }
     
 }
