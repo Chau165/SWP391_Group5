@@ -75,6 +75,9 @@ export default function Home() {
         .setPopup(popup)
         .addTo(map.current);
     });
+      map.current.on('load', () => {
+    map.current.resize();
+  });
   }, []);
 
   return (
@@ -96,23 +99,26 @@ export default function Home() {
       >
         <source src="/promo.mp4" type="video/mp4" />
       </video>
+{/* Layout: Left (3 parts) - Right (7 parts)*/}
+      <div style={{ display: 'flex', height: '80vh', gap: '16px', padding: '24px' }}>
+        {/* Left: Reservation Form (3 parts) */}
+        <div style={{ flex: 3 }}>
+          <ReservationForm stations={stations} />
+        </div>
 
-      <div
-        ref={mapContainer}
-        style={{
-          width: '100vw',
-          height: '80vh',
-          maxWidth: '100%',
-          margin: '0 auto',
-          marginTop: 24,
-          borderRadius: 12,
-          overflow: 'hidden',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.15)'
-        }}
-      />
-
-      {/* Reservation Form */}
-      <ReservationForm stations={stations} />
+        {/* Right: Map (7 parts) */}
+        <div
+          ref={mapContainer}
+          style={{
+            flex: 7,
+            height: '100%',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+          }}
+        />
+      </div>
+     
     </main>
   );
 }
