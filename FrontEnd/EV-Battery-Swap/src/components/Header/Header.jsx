@@ -79,7 +79,12 @@ export default function Header({ onLoginClick }) {
             )}
           </div>
 
-          <Link to="/goshare" className="nav-link">Polices</Link>
+          <Link 
+            to="/polices" 
+            className={`nav-link ${isActive('/polices') ? 'active' : ''}`}
+          >
+            Polices
+          </Link>
           <Link to="/news" className="nav-link">News</Link>
           <Link 
             to="/about" 
