@@ -80,6 +80,13 @@ public class registerController extends HttpServlet {
             input.setStationId(null);
 
             int newId = dao.insertUser(input);
+            if (newId <= 0) {
+                resp.setStatus(500);
+                String err = dao.getLastErrorMessage();
+                if (err == null) err = "Failed to create user (DB error)";
+                out.print("{\"error\":\"" + err.replace("\"","\\\"") + "\"}");
+                return;
+            }
 
             resp.setStatus(201);
             out.print("{\"status\":\"success\",\"userId\":" + newId + ",\"role\":\"Driver\"}");
