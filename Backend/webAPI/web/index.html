@@ -116,144 +116,285 @@
             <pre id="linkResult"></pre>
         </div>
 
+        <!-- Comment -->
+        <div class="card">
+            <h2>Gửi nhận xét (Driver/Staff)</h2>
+            <div id="commentNotice"></div>
+            <label>User ID: <span id="currentUserId">(chưa đăng nhập)</span></label>
+            <label>Chọn giao dịch đã thực hiện: <select id="swapSelect"></select></label>
+            <button type="button" onclick="debugSwaps()" style="margin-top:8px;">Debug: tải raw swaps</button>
+            <label>Nội dung:<br><textarea id="commentContent" rows="4"></textarea></label>
+            <button onclick="sendComment()">Gửi nhận xét</button>
+            <pre id="commentResult"></pre>
+        </div>
+
         <script>
-            // 👉 BASE_URL sẽ tự động lấy context path (khỏi hardcode)
             const BASE_URL = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, "");
-            let loggedUserId = null; // lưu userId sau login
+            let loggedUserId = null; // kept as fallback but session is authoritative
 
             // ===== Login =====
             async function login() {
-            const email = document.getElementById("loginEmail").value.trim();
-            const password = document.getElementById("loginPassword").value.trim();
-            try {
-            const res = await fetch(`${BASE_URL}/api/login`, {
-            method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({ email, password }),
-                    credentials: "include"
-            });
-            const text = await res.text();
-            document.getElementById("loginResult").textContent = text;
-            try {
-            const data = JSON.parse(text);
-            loggedUserId = data?.user?.id || null;
-            } catch {
-            loggedUserId = null;
-            }
-            } catch (err) {
-            document.getElementById("loginResult").textContent = "❌ Lỗi: " + err;
-            }
+                const email = document.getElementById("loginEmail").value.trim();
+                const password = document.getElementById("loginPassword").value.trim();
+                try {
+                    const res = await fetch(`${BASE_URL}/api/login`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({ email, password }),
+                        credentials: "include"
+                    });
+                    const text = await res.text();
+                    document.getElementById("loginResult").textContent = text;
+                    if (res.ok) {
+                        try {
+                            const data = JSON.parse(text);
+                            loggedUserId = data?.user?.id || null;
+                            if (loggedUserId) {
+                                try { localStorage.setItem('loggedUserId', loggedUserId); } catch(e) {}
+                            }
+                        } catch (err) {
+                            loggedUserId = null;
+                        }
+                        // reload session user and swaps so UI updates immediately
+                        await loadSessionUser();
+                        await loadSwapsForSelect();
+                    }
+                } catch (err) {
+                    document.getElementById("loginResult").textContent = "❌ Lỗi: " + err;
+                }
             }
 
             // ===== Register =====
             async function register() {
-            const fullName = document.getElementById("regName").value.trim();
-            const phone = document.getElementById("regPhone").value.trim();
-            const email = document.getElementById("regEmail").value.trim();
-            const password = document.getElementById("regPassword").value.trim();
-            try {
-            const res = await fetch(`${BASE_URL}/api/register`, {
-            method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({ fullName, phone, email, password })
-            });
-            document.getElementById("regResult").textContent = await res.text();
-            } catch (err) {
-            document.getElementById("regResult").textContent = "❌ Lỗi: " + err;
-            }
+                const fullName = document.getElementById("regName").value.trim();
+                const phone = document.getElementById("regPhone").value.trim();
+                const email = document.getElementById("regEmail").value.trim();
+                const password = document.getElementById("regPassword").value.trim();
+                try {
+                    const res = await fetch(`${BASE_URL}/api/register`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({ fullName, phone, email, password })
+                    });
+                    document.getElementById("regResult").textContent = await res.text();
+                } catch (err) {
+                    document.getElementById("regResult").textContent = "❌ Lỗi: " + err;
+                }
             }
 
             // ===== Get Packages =====
             async function getPackages() {
-            try {
-            const res = await fetch(`${BASE_URL}/api/getpackages`);
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            const data = await res.json();
-            const listDiv = document.getElementById("packagesList");
-            listDiv.innerHTML = "";
-            data.forEach(pkg => {
-            const div = document.createElement("div");
-            div.className = "package-item";
-            div.innerHTML = `
-                  <b>Gói ${pkg.packageId}:</b> ${pkg.name} - Giá: ${pkg.price} VND
-                  <button onclick="buyPackage(${pkg.packageId}, ${pkg.price})">Mua ngay</button>
-                `;
-            listDiv.appendChild(div);
-            });
-            document.getElementById("packagesResult").textContent = JSON.stringify(data, null, 2);
-            } catch (err) {
-            document.getElementById("packagesResult").textContent = "❌ Lỗi: " + err;
-            }
+                try {
+                    const res = await fetch(`${BASE_URL}/api/getpackages`);
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+                    const data = await res.json();
+                    const listDiv = document.getElementById("packagesList");
+                    listDiv.innerHTML = "";
+                    data.forEach(pkg => {
+                        const div = document.createElement("div");
+                        div.className = "package-item";
+                        div.innerHTML = `
+                            <b>Gói ${pkg.packageId}:</b> ${pkg.name} - Giá: ${pkg.price} VND
+                            <button onclick="buyPackage(${pkg.packageId}, ${pkg.price})">Mua ngay</button>
+                        `;
+                        listDiv.appendChild(div);
+                    });
+                    document.getElementById("packagesResult").textContent = JSON.stringify(data, null, 2);
+                } catch (err) {
+                    document.getElementById("packagesResult").textContent = "❌ Lỗi: " + err;
+                }
             }
 
             // ===== Buy Package =====
             function buyPackage(packageId, amount) {
-            if (!loggedUserId) {
-            alert("⚠️ Vui lòng đăng nhập trước khi mua gói pin!");
-            return;
-            }
-            const params = new URLSearchParams({
-            userId: loggedUserId,
+                if (!loggedUserId) {
+                    alert("⚠️ Vui lòng đăng nhập trước khi mua gói pin!");
+                    return;
+                }
+                const params = new URLSearchParams({
+                    userId: loggedUserId,
                     packageId: packageId,
                     amount: amount,
                     orderType: "buyPackage"
-            });
-            window.location.href = `${BASE_URL}/payment?${params.toString()}`;
+                });
+                window.location.href = `${BASE_URL}/payment?${params.toString()}`;
             }
 
             // ===== Preview ảnh cà vẹt =====
             function previewCarDoc(event) {
-            const file = event.target.files[0];
-            if (!file) {
-            document.getElementById("previewBox").style.display = "none";
-            return;
-            }
-            const reader = new FileReader();
-            reader.onload = e => {
-            document.getElementById("previewImg").src = e.target.result;
-            document.getElementById("previewBox").style.display = "block";
-            };
-            reader.readAsDataURL(file);
+                const file = event.target.files[0];
+                if (!file) {
+                    document.getElementById("previewBox").style.display = "none";
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = e => {
+                    document.getElementById("previewImg").src = e.target.result;
+                    document.getElementById("previewBox").style.display = "block";
+                };
+                reader.readAsDataURL(file);
             }
 
             // ===== Link Vehicle =====
             async function linkVehicle() {
-            const model = document.getElementById("model").value;
-            const batteryType = document.getElementById("batteryType").value;
-            const fileInput = document.getElementById("carDoc");
-            if (!loggedUserId) {
-            alert("⚠️ Vui lòng đăng nhập trước khi liên kết xe!");
-            return;
-            }
-            if (fileInput.files.length === 0) {
-            alert("⚠️ Vui lòng chọn ảnh cà vẹt!");
-            return;
+                const model = document.getElementById("model").value;
+                const batteryType = document.getElementById("batteryType").value;
+                const fileInput = document.getElementById("carDoc");
+                if (!loggedUserId) {
+                    alert("⚠️ Vui lòng đăng nhập trước khi liên kết xe!");
+                    return;
+                }
+                if (fileInput.files.length === 0) {
+                    alert("⚠️ Vui lòng chọn ảnh cà vẹt!");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("model", model);
+                formData.append("batteryType", batteryType);
+                formData.append("carDoc", fileInput.files[0]);
+                formData.append("userId", loggedUserId);
+                try {
+                    const res = await fetch(`${BASE_URL}/api/linkVehicleController`, {
+                        method: "POST",
+                        body: formData,
+                        credentials: "include"
+                    });
+                    const text = await res.text();
+                    document.getElementById("linkResult").textContent = text || "⚠️ Server không trả dữ liệu nào";
+                    try {
+                        const data = JSON.parse(text);
+                        alert("✅ Liên kết xe thành công!");
+                        console.log("Kết quả JSON:", data);
+                    } catch {
+                        console.warn("⚠️ Phản hồi không phải JSON:", text);
+                    }
+                } catch (err) {
+                    document.getElementById("linkResult").textContent = "❌ Lỗi fetch: " + err;
+                }
             }
 
-            const formData = new FormData();
-            formData.append("model", model);
-            formData.append("batteryType", batteryType);
-            formData.append("carDoc", fileInput.files[0]);
-            formData.append("userId", loggedUserId);
-            try {
-            const res = await fetch(`${BASE_URL}/api/linkVehicleController`, {
-            method: "POST",
-                    body: formData,
-                    credentials: "include"
-            });
-            const text = await res.text();
-            document.getElementById("linkResult").textContent = text || "⚠️ Server không trả dữ liệu nào";
-            try {
-            const data = JSON.parse(text);
-            alert("✅ Liên kết xe thành công!");
-            console.log("Kết quả JSON:", data);
-            } catch {
-            console.warn("⚠️ Phản hồi không phải JSON:", text);
+            // ===== Comment feature =====
+            const COMMENTS_API = `${BASE_URL}/api/comments`;
+            const STATION_API = `${BASE_URL}/api/getstations`;
+            const SESSION_API = `${BASE_URL}/api/sessionUser`;
+
+            let sessionUser = null;
+
+            async function loadSessionUser() {
+                try {
+                    const res = await fetch(SESSION_API, { credentials: 'include' });
+                    if (!res.ok) {
+                        // clear UI
+                        sessionUser = null;
+                        document.getElementById('currentUserId').textContent = '(chưa đăng nhập)';
+                        document.getElementById('commentNotice').textContent = '';
+                        return;
+                    }
+                    const data = await res.json();
+                    if (data && data.id) {
+                        sessionUser = data;
+                        document.getElementById('currentUserId').textContent = data.id;
+                        document.getElementById('commentNotice').textContent = `Bạn đang đăng nhập: ${data.fullName} (Role: ${data.role})`;
+                    } else {
+                        sessionUser = null;
+                        try {
+                            const saved = localStorage.getItem('loggedUserId');
+                            if (saved) document.getElementById('currentUserId').textContent = saved;
+                        } catch(e) {}
+                    }
+                } catch (e) { console.warn('Cannot load session user', e); }
             }
-            } catch (err) {
-            document.getElementById("linkResult").textContent = "❌ Lỗi fetch: " + err;
+
+            async function loadSwapsForSelect() {
+                try {
+                    const res = await fetch(`${BASE_URL}/api/user/swaps`, { credentials: 'include' });
+                    const sel = document.getElementById('swapSelect');
+                    sel.innerHTML = '';
+                    if (!res.ok) {
+                        let txt = '';
+                        try { txt = await res.text(); } catch(e) { txt = res.statusText || ('HTTP ' + res.status); }
+                        console.warn('Swaps API failed', res.status, txt);
+                        document.getElementById('commentResult').textContent = 'Không thể tải giao dịch: ' + res.status + '\n' + txt;
+                        const opt = document.createElement('option');
+                        opt.value = '';
+                        opt.textContent = 'Không có giao dịch để chọn';
+                        sel.appendChild(opt);
+                        return;
+                    }
+                    const data = await res.json();
+                    if (!data || data.length === 0) {
+                        const opt = document.createElement('option');
+                        opt.value = '';
+                        opt.textContent = 'Bạn chưa có giao dịch đổi pin để đánh giá';
+                        sel.appendChild(opt);
+                        return;
+                    }
+                    data.forEach(s => {
+                        const opt = document.createElement('option');
+                        const id = s.swapId || s.Swap_ID || s.SwapId || s.swap_id;
+                        const stationName = s.stationId ? ('Trạm ' + s.stationId) : 'Trạm không rõ';
+                        const time = s.timeSwap ? new Date(s.timeSwap).toLocaleString() : '';
+                        opt.value = id;
+                        opt.textContent = `${time} — ${stationName} — #${id}`;
+                        sel.appendChild(opt);
+                    });
+                } catch (e) {
+                    console.warn('Cannot load swaps', e);
+                    document.getElementById('commentResult').textContent = 'Lỗi khi tải giao dịch: ' + e;
+                    const sel = document.getElementById('swapSelect');
+                    sel.innerHTML = '';
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = 'Không thể tải giao dịch';
+                    sel.appendChild(opt);
+                }
             }
+
+            async function debugSwaps() {
+                try {
+                    const res = await fetch(`${BASE_URL}/api/user/swaps`, { credentials: 'include' });
+                    const txt = await res.text();
+                    document.getElementById('commentResult').textContent = 'HTTP ' + res.status + '\n' + txt;
+                    try {
+                        const data = JSON.parse(txt);
+                        console.log('Parsed swaps:', data);
+                    } catch (e) {
+                        console.warn('Response not JSON', e);
+                    }
+                } catch (e) {
+                    document.getElementById('commentResult').textContent = 'Fetch error: ' + e;
+                }
             }
+
+            async function sendComment() {
+                const content = document.getElementById('commentContent').value.trim();
+                const swapId = Number(document.getElementById('swapSelect').value);
+                if (!sessionUser && !localStorage.getItem('loggedUserId')) { alert('Vui lòng đăng nhập trước khi gửi nhận xét'); return; }
+                if (!content) { alert('Nội dung rỗng'); return; }
+                if (!swapId) { alert('Vui lòng chọn giao dịch đã thực hiện để đánh giá'); return; }
+
+                // Send swapId and content; server uses session user id
+                const payload = { swapId: Number(swapId), content };
+                try {
+                    const res = await fetch(COMMENTS_API, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        credentials: 'include'
+                    });
+                    const txt = await res.text();
+                    document.getElementById('commentResult').textContent = 'Status: ' + res.status + '\n' + txt;
+                } catch (e) {
+                    document.getElementById('commentResult').textContent = 'Lỗi gửi: ' + e;
+                }
+            }
+
+            // initialize
+            (async () => {
+                await loadSessionUser();
+                await loadSwapsForSelect();
+            })();
         </script>
 
     </body>

@@ -7,21 +7,33 @@ public class Users {
     private String email;
     private String password;
     private String role;
+    private String status;
     private Integer stationId; // có thể NULL
 
-    public Users() {
-    }
-
-    public Users(int id, String fullName, String phone, String email,
-                 String password, String role, Integer stationId) {
+    public Users(int id, String fullName, String phone, String email, String password, String role, String status, Integer stationId) {
         this.id = id;
         this.fullName = fullName;
         this.phone = phone;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.status = status;
         this.stationId = stationId;
     }
+
+    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    
+    public Users() {
+    }
+
 
     // Getter & Setter
     public int getId() { return id; }

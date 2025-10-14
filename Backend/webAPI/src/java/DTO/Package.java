@@ -5,14 +5,28 @@ public class Package {
     private String name;
     private String description;
     private double price;
+    private double requiredSoH;
+    private int minSoH;
+    private int maxSoH;
 
     public Package() {}
 
-    public Package(int packageId, String name, String description, double price) {
+    public Package(int packageId, String name, String description, double price, double requiredSoH, int minSoH, int maxSoH) {
         this.packageId = packageId;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.requiredSoH = requiredSoH;
+        this.minSoH = minSoH;
+        this.maxSoH = maxSoH;
+    }
+
+    public Package(int packageId, String name, String description, double price, double requiredSoH) {
+        this.packageId = packageId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.requiredSoH = requiredSoH;
     }
 
     public int getPackageId() {
@@ -47,13 +61,27 @@ public class Package {
         this.price = price;
     }
 
-    @Override
-    public String toString() {
-        return "PackageDTO{" +
-                "packageId=" + packageId +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                '}';
+    public double getRequiredSoH() {
+        return requiredSoH;
+    }
+
+    public void setRequiredSoH(double requiredSoH) {
+        this.requiredSoH = requiredSoH;
+    }
+
+    public int getMinSoH() {
+        return minSoH;
+    }
+
+    public void setMinSoH(int minSoH) {
+        this.minSoH = minSoH;
+    }
+
+    public int getMaxSoH() {
+        return maxSoH;
+    }
+
+    public void setMaxSoH(int maxSoH) {
+        this.maxSoH = maxSoH;
     }
 }

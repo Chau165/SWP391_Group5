@@ -12,16 +12,14 @@ public class Station {
     public int Station_ID;
     public String Name;
     public String Address;
-    public int Total_Battery;
 
     public Station() {
     }
 
-    public Station(int Station_ID, String Name, String Address, int Total_Battery) {
+    public Station(int Station_ID, String Name, String Address) {
         this.Station_ID = Station_ID;
         this.Name = Name;
         this.Address = Address;
-        this.Total_Battery = Total_Battery;
     }
 
     public int getStation_ID() {
@@ -46,15 +44,6 @@ public class Station {
 
     public void setAddress(String Address) {
         this.Address = Address;
-    }
-
-    public int getTotal_Battery() {
-        return Total_Battery;
-    }
-
-    public void setTotal_Battery(int Total_Battery) {
-        this.Total_Battery = Total_Battery;
-    }
-    
+    }    
     
 }

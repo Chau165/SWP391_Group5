@@ -1,42 +1,56 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DTO;
 
-import java.sql.Date;
-import javafx.scene.chart.PieChart;
+import java.sql.Timestamp;
 
-/**
- *
- * @author Surface
- */
 public class Booking {
-    public int Booking_ID;
-    public int Vehicle_ID;
-    public String Battery_Request;
-    public int Package_ID;
-    public int User_ID;
-    public int Station_ID;
-    public String Status;
-    public String Qr_Code;
-    public Date Booking_Time;
-    public Date Expired_Date;
+    private int booking_ID;
+    private int user_ID;
+    private int vehicle_ID;
+    private int package_ID;
 
-    public Booking() {
-    }
+    private int station_ID;           // song song với ChargingStation_ID
+    private int chargingStation_ID;   // id từ bảng Charging_Station
+    private int slot_ID;
 
-    public Booking(int Booking_ID, int Vehicle_ID, String Battery_Request, int Package_ID, int User_ID, int Station_ID, String Status, String Qr_Code, Date Booking_Time, Date Expired_Date) {
-        this.Booking_ID = Booking_ID;
-        this.Vehicle_ID = Vehicle_ID;
-        this.Battery_Request = Battery_Request;
-        this.Package_ID = Package_ID;
-        this.User_ID = User_ID;
-        this.Station_ID = Station_ID;
-        this.Status = Status;
-        this.Qr_Code = Qr_Code;
-        this.Booking_Time = Booking_Time;
-        this.Expired_Date = Expired_Date;
-    }
-    
+    private String battery_Request;   // model pin (nếu có)
+    private String status;            // Reserved | Completed | Cancelled...
+    private Timestamp booking_Time;
+    private Timestamp expired_Date;
+    private String qr_Code;
+
+    public int getBooking_ID() { return booking_ID; }
+    public void setBooking_ID(int booking_ID) { this.booking_ID = booking_ID; }
+
+    public int getUser_ID() { return user_ID; }
+    public void setUser_ID(int user_ID) { this.user_ID = user_ID; }
+
+    public int getVehicle_ID() { return vehicle_ID; }
+    public void setVehicle_ID(int vehicle_ID) { this.vehicle_ID = vehicle_ID; }
+
+    public int getPackage_ID() { return package_ID; }
+    public void setPackage_ID(int package_ID) { this.package_ID = package_ID; }
+
+    public int getStation_ID() { return station_ID; }
+    public void setStation_ID(int station_ID) { this.station_ID = station_ID; }
+
+    public int getChargingStation_ID() { return chargingStation_ID; }
+    public void setChargingStation_ID(int chargingStation_ID) { this.chargingStation_ID = chargingStation_ID; }
+
+    public int getSlot_ID() { return slot_ID; }
+    public void setSlot_ID(int slot_ID) { this.slot_ID = slot_ID; }
+
+    public String getBattery_Request() { return battery_Request; }
+    public void setBattery_Request(String battery_Request) { this.battery_Request = battery_Request; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public Timestamp getBooking_Time() { return booking_Time; }
+    public void setBooking_Time(Timestamp booking_Time) { this.booking_Time = booking_Time; }
+
+    public Timestamp getExpired_Date() { return expired_Date; }
+    public void setExpired_Date(Timestamp expired_Date) { this.expired_Date = expired_Date; }
+
+    public String getQr_Code() { return qr_Code; }
+    public void setQr_Code(String qr_Code) { this.qr_Code = qr_Code; }
 }

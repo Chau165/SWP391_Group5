@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.SQLException;
 
 import mylib.DBUtils;
 import DTO.Package;
@@ -29,7 +30,7 @@ public class PackageDAO {
                         rs.getInt("MinSoH"),
                         rs.getInt("MaxSoH")
                 ));
-                list.add(pkg);
+
             }
 
         } catch (Exception e) {
@@ -52,7 +53,7 @@ public class PackageDAO {
                     pkg.setName(rs.getString("Name"));
                     pkg.setDescription(rs.getString("Description"));
                     pkg.setPrice(rs.getDouble("Price"));
-                    pkg.setRequired_SoH(rs.getDouble("Required_SoH"));
+                    pkg.setRequiredSoH(rs.getDouble("Required_SoH"));
                     pkg.setMinSoH(rs.getInt("MinSoH"));
                     pkg.setMaxSoH(rs.getInt("MaxSoH"));
                     return pkg;
@@ -70,7 +71,7 @@ public class PackageDAO {
             ps.setString(1, pkg.getName());
             ps.setString(2, pkg.getDescription());
             ps.setDouble(3, pkg.getPrice());
-            ps.setDouble(4, pkg.getRequired_SoH());
+            ps.setDouble(4, pkg.getRequiredSoH());
             ps.setInt(5, pkg.getMinSoH());
             ps.setInt(6, pkg.getMaxSoH());
 
@@ -132,6 +133,76 @@ public boolean deletePackage(int packageId) {
             e.printStackTrace();
             return false;
         }
+    
+    }
+
+    // ===== Helper: map 1 row ResultSet -> Package DTO =====
+    private Package mapRow(ResultSet rs) throws SQLException {
+        Package pkg = new Package();
+        // LƯU Ý: tên setter phải khớp DTO của bạn
+        // (bạn đang dùng setPackageId / setRequiredSoH ...)
+        pkg.setPackageId(rs.getInt("Package_ID"));
+        pkg.setName(rs.getString("Name"));
+        pkg.setDescription(rs.getString("Description"));
+        pkg.setPrice(rs.getDouble("Price"));
+        pkg.setRequiredSoH(rs.getDouble("Required_SoH"));
+        pkg.setMinSoH(rs.getInt("MinSoH"));
+        pkg.setMaxSoH(rs.getInt("MaxSoH"));
+        return pkg;
+    }   
+
+    // ===== 1a) Overload: Lấy toàn bộ package nhưng dùng connection có sẵn =====
+    public List<Package> getAllPackage(Connection con) throws SQLException {
+        List<Package> list = new ArrayList<>();
+        String sql = "SELECT Package_ID, Name, Description, Price, Required_SoH, MinSoH, MaxSoH FROM dbo.[Package]";
+        try (PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) list.add(mapRow(rs));
+        }
+        return list;
+    }
+
+    // ===== 2) Lấy package theo ID (tự mở connection) =====
+    public Package getPackageById(int id) {
+        String query = "SELECT Package_ID, Name, Description, Price, Required_SoH, MinSoH, MaxSoH " +
+                       "FROM dbo.[Package] WHERE Package_ID = ?";
+        try (Connection connect = DBUtils.getConnection();
+             PreparedStatement ps = connect.prepareStatement(query)) {
+
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs != null && rs.next()) return mapRow(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // ===== 2a) Overload: Lấy package theo ID dùng connection có sẵn =====
+    public Package getPackageById(Connection con, int id) throws SQLException {
+        String query = "SELECT Package_ID, Name, Description, Price, Required_SoH, MinSoH, MaxSoH " +
+                       "FROM dbo.[Package] WHERE Package_ID = ?";
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return (rs != null && rs.next()) ? mapRow(rs) : null;
+            }
+        }
+    }
+
+    // ===== 3) Tiện ích: Lấy package theo User_ID (qua Users.Package_ID) =====
+    //   -> Dùng cho booking flow: lấy gói của user hiện tại.
+    public Package getPackageByUserId(Connection con, int userId) throws SQLException {
+        String sql = "SELECT p.Package_ID, p.Name, p.Description, p.Price, p.Required_SoH, p.MinSoH, p.MaxSoH " +
+                     "FROM dbo.Users u " +
+                     "JOIN dbo.[Package] p ON u.Package_ID = p.Package_ID " +
+                     "WHERE u.ID = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return (rs != null && rs.next()) ? mapRow(rs) : null;
+            }
+        }
     }
 }
-
