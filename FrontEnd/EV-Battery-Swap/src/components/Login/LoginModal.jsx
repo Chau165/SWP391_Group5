@@ -52,13 +52,8 @@ export default function LoginModal({ isOpen, onClose }) {
     setIsLoading(true);
 
     try {
-      // Use Vite env when available, otherwise fallback to CRA env var
-      const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE) || process.env.REACT_APP_API_URL || '';
-
-      // Use credentials flag if explicitly enabled in env
-      const useCredentials = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_USE_CREDENTIALS === 'true') || (process.env.REACT_APP_API_USE_CREDENTIALS === 'true');
-
-      const endpoint = `${API_BASE.replace(/\/$/, '')}/webAPI/api/login`;
+      // Sử dụng endpoint backend ngrok
+      const endpoint = 'https://90302023f1d4.ngrok-free.app/webAPI/api/login';
 
       console.log('API Endpoint:', endpoint);
       console.log('Request data:', formData);
@@ -67,9 +62,9 @@ export default function LoginModal({ isOpen, onClose }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true', // Bypass ngrok warning
+          'ngrok-skip-browser-warning': 'true',
         },
-        credentials: useCredentials ? 'include' : 'omit',
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
 
@@ -83,20 +78,33 @@ export default function LoginModal({ isOpen, onClose }) {
       } catch (jsonErr) {
         data = null;
       }
+      console.log('API response data:', data);
 
       if (res.ok) {
-        // If API returns token, save it. If your backend sets httpOnly cookie, you don't need to store token in localStorage.
         if (data && data.token) {
           localStorage.setItem('authToken', data.token);
         }
-
-        // Optionally store user object
         if (data && data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
-
         onClose();
-        navigate('/dashboard');
+        // Điều hướng tự động theo role
+        if (data && data.user && data.user.role) {
+          const role = String(data.user.role).toLowerCase();
+          if (role === 'admin') {
+            navigate('/dashboard/admin');
+          } else if (role === 'staff') {
+            navigate('/dashboard/staff');
+          } else if (role === 'driver') {
+            navigate('/dashboard/driver');
+          } else {
+            setError('Tài khoản không có quyền truy cập dashboard phù hợp!');
+            navigate('/');
+          }
+        } else {
+          setError('API không trả về user.role. Vui lòng kiểm tra lại backend!');
+          navigate('/');
+        }
       } else {
         // Prefer message from JSON response, fallback to status text
         const msg = data?.message || data?.error || res.statusText || 'Email hoặc mật khẩu không đúng.';

@@ -12,6 +12,9 @@ import AboutUs from './pages/About Us/AboutUs';
 import Battery from './pages/Battery Electric/Battery';
 import BatteryPin from './pages/Battery Electric/BatteryPin';
 import Polices from './pages/Polices/polices';
+import AdminDashboard from './pages/Dashboard/Admin/admin';
+import StaffDashboard from './pages/Dashboard/Staff/staff';
+import DriverDashboard from './pages/Dashboard/Driver/driver';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); 
@@ -31,6 +34,9 @@ function App() {
             <Route path="/battery" element={<Battery />} /> 
             <Route path="/battery-pin" element={<BatteryPin />} />
             <Route path="/polices" element={<Polices />} />
+            <Route path="/dashboard/admin" element={<AdminDashboard />} />
+            <Route path="/dashboard/staff" element={<StaffDashboard />} />
+            <Route path="/dashboard/driver" element={<DriverDashboard />} />
           </Routes>
       </main>
 
