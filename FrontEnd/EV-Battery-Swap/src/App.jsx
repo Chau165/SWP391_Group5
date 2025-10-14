@@ -10,7 +10,8 @@ import LoginModal from './components/Login/LoginModal';
 import Home from './pages/Home/Home';
 import AboutUs from './pages/About Us/AboutUs';
 import Battery from './pages/Battery Electric/Battery';
-import BatteryPin from './pages/Battery Electric/BatteryPin'; // Thêm import
+import BatteryPin from './pages/Battery Electric/BatteryPin';
+import Polices from './pages/Polices/polices';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); 
@@ -27,10 +28,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
-            {/* Đảm bảo Route này đã được thêm vào */}
             <Route path="/battery" element={<Battery />} /> 
-            <Route path="/battery-pin" element={<BatteryPin />} /> {/* Thêm route mới */}
-            {/* THÊM ROUTE CHO TRANG 404 NẾU CẦN: <Route path="*" element={<NotFound />} /> */}
+            <Route path="/battery-pin" element={<BatteryPin />} />
+            <Route path="/polices" element={<Polices />} />
           </Routes>
       </main>
 

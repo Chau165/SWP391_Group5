@@ -7,6 +7,20 @@
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>
         <url-pattern>/NewServlet</url-pattern>
+        <servlet-name>getBookingController</servlet-name>
+        <servlet-class>controller.getBookingController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>checkInController</servlet-name>
+        <servlet-class>controller.checkInController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>getBookingController</servlet-name>
+        <url-pattern>/getBookingController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>checkInController</servlet-name>
+        <url-pattern>/checkInController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
