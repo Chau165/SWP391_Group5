@@ -24,7 +24,7 @@ public class loginController extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        setCorsHeaders(response);
+        setCorsHeaders(request, response);
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
@@ -32,7 +32,7 @@ public class loginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        setCorsHeaders(response);
+            setCorsHeaders(request, response);
         response.setContentType("application/json;charset=UTF-8");
 
         try ( PrintWriter out = response.getWriter();  BufferedReader reader = request.getReader()) {
@@ -70,6 +70,7 @@ public class loginController extends HttpServlet {
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("User", user);
+                
                 String json = gson.toJson(user);
                 response.setStatus(HttpServletResponse.SC_OK);
                 out.print("{\"status\":\"success\",\"user\":" + json + "}");
@@ -92,12 +93,17 @@ public class loginController extends HttpServlet {
     //   response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
     //    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     //}
-  private void setCorsHeaders(HttpServletResponse response) {
-    response.setHeader("Access-Control-Allow-Origin", "*"); // cho mọi origin
-    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    // bỏ Access-Control-Allow-Credentials khi dùng *
-}
+    // Echo Origin and allow credentials to support cross-origin requests with cookies
+    private void setCorsHeaders(HttpServletRequest request, HttpServletResponse response) {
+        String origin = request.getHeader("Origin");
+        if (origin == null || origin.isEmpty()) {
+            origin = "*";
+        }
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+    }
 
     private static class LoginRequest {
 
