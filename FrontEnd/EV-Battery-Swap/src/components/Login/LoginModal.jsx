@@ -53,7 +53,7 @@ export default function LoginModal({ isOpen, onClose }) {
 
     try {
       // Sử dụng endpoint backend ngrok
-      const endpoint = 'https://90302023f1d4.ngrok-free.app/webAPI/api/login';
+      const endpoint = 'https://a7ad0398bc12.ngrok-free.app/webAPI/api/login';
 
       console.log('API Endpoint:', endpoint);
       console.log('Request data:', formData);

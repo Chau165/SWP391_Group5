@@ -85,13 +85,8 @@ export default function Header({ onLoginClick }) {
           >
             Polices
           </Link>
-          <Link to="/news" className="nav-link">News</Link>
-          <Link 
-            to="/about" 
-            className={`nav-link ${isActive('/about') ? 'active' : ''}`}
-          >
-            About Us
-          </Link>
+          
+          
         </nav>
         
         {/* BỔ SUNG: Phần tử chứa nút Login (đã được định kiểu trong CSS) */}
