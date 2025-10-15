@@ -9,6 +9,8 @@ import './LoginModal.css';
  * @param {function} onClose - Hàm đóng modal
  */
 export default function LoginModal({ isOpen, onClose }) {
+  // Toggle between login and register form
+  const [isRegister, setIsRegister] = useState(false);
   const modalRef = useRef();
   const navigate = useNavigate();
 
@@ -44,6 +46,14 @@ export default function LoginModal({ isOpen, onClose }) {
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  // Registration form submit (mock)
+  const handleRegister = (e) => {
+    e.preventDefault();
+    // You can add real registration logic here
+    setIsRegister(false);
+    alert('Đăng ký thành công!');
+  };
 
   // BỔ SUNG 3: Hàm gọi API Đăng nhập
   const handleSubmit = async (e) => {
@@ -126,50 +136,85 @@ export default function LoginModal({ isOpen, onClose }) {
           &times;
         </button>
 
-        <h2 className="modal-title">Đăng nhập</h2>
-        <p className="modal-subtitle">Chào mừng trở lại. Vui lòng nhập thông tin của bạn.</p>
-
-        <form className="login-form" onSubmit={handleSubmit}>
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Nhập email của bạn"
-              required
-              value={formData.email} // Gắn giá trị state
-              onChange={handleChange} // Xử lý thay đổi
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Mật khẩu</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Nhập mật khẩu"
-              required
-              value={formData.password} // Gắn giá trị state
-              onChange={handleChange} // Xử lý thay đổi
-            />
-          </div>
-
-          {/* BỔ SUNG 4: Hiển thị lỗi */}
-          {error && <p className="error-message">{error}</p>}
-
-          <div className="form-options">
-            <a href="#" className="forgot-password">Quên mật khẩu?</a>
-          </div>
-
-          <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-          </button>
-        </form>
-
-        <p className="signup-link">
-          Chưa có tài khoản? <a href="#">Đăng ký ngay</a>
-        </p>
+        {isRegister ? (
+          <>
+            <h2 className="modal-title">Đăng ký</h2>
+            <p className="modal-subtitle">Tạo tài khoản mới để sử dụng dịch vụ.</p>
+            <form className="login-form" onSubmit={handleRegister}>
+              <div className="form-group">
+                <label htmlFor="reg-email">Email</label>
+                <input type="email" id="reg-email" placeholder="Nhập email" required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="reg-password">Mật khẩu</label>
+                <input type="password" id="reg-password" placeholder="Nhập mật khẩu" required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="reg-confirm">Xác nhận mật khẩu</label>
+                <input type="password" id="reg-confirm" placeholder="Nhập lại mật khẩu" required />
+              </div>
+              <button type="submit" className="login-button">Đăng ký</button>
+            </form>
+            <p className="signup-link">
+              Đã có tài khoản?{' '}
+              <button
+                type="button"
+                className="register-link"
+                style={{ background: 'none', border: 'none', color: '#1976d2', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}
+                onClick={() => setIsRegister(false)}
+              >
+                Đăng nhập
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="modal-title">Đăng nhập</h2>
+            <p className="modal-subtitle">Chào mừng trở lại. Vui lòng nhập thông tin của bạn.</p>
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Nhập email của bạn"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">Mật khẩu</label>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Nhập mật khẩu"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+              {error && <p className="error-message">{error}</p>}
+              <button type="submit" className="login-button" disabled={isLoading}>
+                {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+              </button>
+              <div className="form-options" style={{ marginTop: 12 }}>
+                <a href="#" className="forgot-password">Quên mật khẩu?</a>
+              </div>
+            </form>
+            <p className="signup-link">
+              Chưa có tài khoản?{' '}
+              <button
+                type="button"
+                className="register-link"
+                style={{ background: 'none', border: 'none', color: '#1976d2', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}
+                onClick={() => setIsRegister(true)}
+              >
+                Đăng ký ngay
+              </button>
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

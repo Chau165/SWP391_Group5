@@ -2,6 +2,10 @@ import React, { useRef, useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
 import reactLogo from '../../assets/react.svg';
+
+// Global Mapbox token constant
+const MAPBOX_TOKEN = 'pk.eyJ1Ijoia2hvaXZ1engiLCJhIjoiY21nNHcyZXZ4MHg5ZTJtcGtrNm9hbmVpciJ9.N3prC7rC3ycR6DV5giMUfg';
+
 import ReservationForm from '../../components/ReserveForm/ReservationForm';
 
 export default function Home() {
@@ -38,7 +42,7 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    mapboxgl.accessToken = 'pk.eyJ1Ijoia2hvaXZ1engiLCJhIjoiY21nNHcyZXZ4MHg5ZTJtcGtrNm9hbmVpciJ9.N3prC7rC3ycR6DV5giMUfg'; // TODO: Replace with your token
+  mapboxgl.accessToken = MAPBOX_TOKEN;
     if (map.current) return;
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
