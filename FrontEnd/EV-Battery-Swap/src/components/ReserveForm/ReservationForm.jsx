@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-export default function ReservationForm({ stations }) {
-  const [selectedStation, setSelectedStation] = useState("");
+export default function ReservationForm({ stations, selectedStation, setSelectedStation, onFindPath }) {
   const [selectedBattery, setSelectedBattery] = useState("");
   const [msg, setMsg] = useState("");
 
@@ -25,7 +24,8 @@ export default function ReservationForm({ stations }) {
       setMsg("Please select a station first to find the path.");
       return;
     }
-    setMsg(`🗺️ Finding path to ${selectedStation}... (Mapbox integration pending)`);
+    setMsg("");
+    if (onFindPath) onFindPath();
   };
 
   return (
