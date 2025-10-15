@@ -101,7 +101,7 @@ public List<Object[]> getPackageRevenueStatistics() {
                 "    P.Package_ID,\n" +
                 "    P.Name\n" +
                 "ORDER BY\n" +
-                "    SoLuongMua DESC;";
+                "    Description DESC;";
 
       try (Connection conn = DBUtils.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql);
@@ -111,8 +111,8 @@ public List<Object[]> getPackageRevenueStatistics() {
             Object[] row = new Object[4]; // Correct size
             row[0] = rs.getInt("Package_ID");
             row[1] = rs.getString("Name");
-            row[2] = rs.getInt("Description"); // Get SoLuongMua
-            row[3] = rs.getDouble("Price"); // Get TongDoanhThu
+            row[2] = rs.getInt("Description"); 
+            row[3] = rs.getDouble("Price");
             list.add(row);
         }
 
@@ -122,10 +122,9 @@ public List<Object[]> getPackageRevenueStatistics() {
     return list;
 }
 public boolean deletePackage(int packageId) {
-        String sql = "DELETE FROM Package WHERE Package_ID = ?";
+        String sql = "UPDATE Package SET STATUS = 'inactive' WHERE Package_ID = ?";
         try (Connection conn = DBUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, packageId);
             return ps.executeUpdate() > 0;
 

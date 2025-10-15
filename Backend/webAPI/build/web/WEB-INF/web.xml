@@ -14,6 +14,10 @@
         <servlet-name>checkInController</servlet-name>
         <servlet-class>controller.checkInController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SwaggerConfigServlet</servlet-name>
+        <servlet-class>config.SwaggerConfigServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>getBookingController</servlet-name>
         <url-pattern>/getBookingController</url-pattern>
@@ -21,6 +25,10 @@
     <servlet-mapping>
         <servlet-name>checkInController</servlet-name>
         <url-pattern>/checkInController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SwaggerConfigServlet</servlet-name>
+        <url-pattern>/api/openapi.json</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
