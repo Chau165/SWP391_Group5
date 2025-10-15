@@ -15,18 +15,24 @@ import Polices from './pages/Polices/polices';
 import AdminDashboard from './pages/Dashboard/Admin/admin';
 import StaffDashboard from './pages/Dashboard/Staff/staff';
 import DriverDashboard from './pages/Dashboard/Driver/driver';
-
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); 
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const handleOpenModal = () => setIsLoginModalOpen(true);
   const handleCloseModal = () => setIsLoginModalOpen(false);
+  // Khi đăng nhập thành công, cập nhật user và đóng modal
+  const handleLoginSuccess = (userObj) => {
+    setUser(userObj);
+    setIsLoginModalOpen(false);
+  };
 
   return (
     <Router>
-      <Header onLoginClick={handleOpenModal} />
-      
-      {/* THÊM THẺ MAIN ĐỂ BAO BỌC NỘI DUNG CHÍNH */}
+      <Header onLoginClick={handleOpenModal} user={user} />
       <main> 
           <Routes>
             <Route path="/" element={<Home />} />
@@ -34,16 +40,16 @@ function App() {
             <Route path="/battery" element={<Battery />} /> 
             <Route path="/battery-pin" element={<BatteryPin />} />
             <Route path="/polices" element={<Polices />} />
-            <Route path="/dashboard/admin" element={<AdminDashboard />} />
-            <Route path="/dashboard/staff" element={<StaffDashboard />} />
+            <Route path="/dashboard/admin" element={<AdminDashboard user={user} onLoginClick={handleOpenModal} />} />
+            <Route path="/dashboard/staff" element={<StaffDashboard user={user} onLoginClick={handleOpenModal} />} />
             <Route path="/dashboard/driver" element={<DriverDashboard />} />
           </Routes>
       </main>
-
       <Footer />
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={handleCloseModal} 
+        onLoginSuccess={handleLoginSuccess}
       />
     </Router>
   )

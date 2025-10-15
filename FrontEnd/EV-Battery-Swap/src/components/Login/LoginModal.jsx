@@ -8,8 +8,9 @@ import './LoginModal.css';
  * Component LoginModal
  * @param {boolean} isOpen - Trạng thái hiển thị modal
  * @param {function} onClose - Hàm đóng modal
+ * @param {function} onLoginSuccess - Hàm gọi khi đăng nhập thành công
  */
-export default function LoginModal({ isOpen, onClose }) {
+export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [showRegister, setShowRegister] = useState(false);
   const modalRef = useRef();
   const navigate = useNavigate();
@@ -69,6 +70,9 @@ export default function LoginModal({ isOpen, onClose }) {
         if (data && data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
+        if (data && data.user && onLoginSuccess) {
+          onLoginSuccess(data.user);
+        }
         onClose();
         if (data && data.user && data.user.role) {
           const role = String(data.user.role).toLowerCase();
@@ -101,8 +105,8 @@ export default function LoginModal({ isOpen, onClose }) {
   if (showRegister) {
     return (
       <RegisterModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={showRegister}
+        onClose={() => setShowRegister(false)}
         onSwitchToLogin={() => setShowRegister(false)}
       />
     );
