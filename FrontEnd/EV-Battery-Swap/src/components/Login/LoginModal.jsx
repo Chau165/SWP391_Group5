@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import RegisterModal from './RegisterModal';
 import './LoginModal.css';
 
 
@@ -9,36 +10,24 @@ import './LoginModal.css';
  * @param {function} onClose - Hàm đóng modal
  */
 export default function LoginModal({ isOpen, onClose }) {
-  // Toggle between login and register form
-  const [isRegister, setIsRegister] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   const modalRef = useRef();
   const navigate = useNavigate();
-
-  //State để lưu trữ Email và Mật khẩu
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-
-  //State để quản lý lỗi và trạng thái tải
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Hàm xử lý thay đổi input
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // Logic đóng modal khi click ra ngoài (backdrop)
   useEffect(() => {
     if (!isOpen) return;
-
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         onClose();
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -47,27 +36,12 @@ export default function LoginModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  // Registration form submit (mock)
-  const handleRegister = (e) => {
-    e.preventDefault();
-    // You can add real registration logic here
-    setIsRegister(false);
-    alert('Đăng ký thành công!');
-  };
-
-  // BỔ SUNG 3: Hàm gọi API Đăng nhập
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
-
     try {
-      // Sử dụng endpoint backend ngrok
-      const endpoint = 'https://a7ad0398bc12.ngrok-free.app/webAPI/api/login';
-
-      console.log('API Endpoint:', endpoint);
-      console.log('Request data:', formData);
-
+      const endpoint = 'https://2cef17460b16.ngrok-free.app/webAPI/api/login';
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -88,8 +62,6 @@ export default function LoginModal({ isOpen, onClose }) {
       } catch (jsonErr) {
         data = null;
       }
-      console.log('API response data:', data);
-
       if (res.ok) {
         if (data && data.token) {
           localStorage.setItem('authToken', data.token);
@@ -98,7 +70,6 @@ export default function LoginModal({ isOpen, onClose }) {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
         onClose();
-        // Điều hướng tự động theo role
         if (data && data.user && data.user.role) {
           const role = String(data.user.role).toLowerCase();
           if (role === 'admin') {
@@ -116,18 +87,26 @@ export default function LoginModal({ isOpen, onClose }) {
           navigate('/');
         }
       } else {
-        // Prefer message from JSON response, fallback to status text
         const msg = data?.message || data?.error || res.statusText || 'Email hoặc mật khẩu không đúng.';
         setError(msg);
       }
     } catch (err) {
-      console.error('Login error:', err);
       setError('Lỗi kết nối mạng. Vui lòng thử lại.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Hiển thị RegisterModal nếu showRegister true
+  if (showRegister) {
+    return (
+      <RegisterModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSwitchToLogin={() => setShowRegister(false)}
+      />
+    );
+  }
 
   return (
     <div className="modal-backdrop">
@@ -135,86 +114,50 @@ export default function LoginModal({ isOpen, onClose }) {
         <button className="close-btn" onClick={onClose} aria-label="Đóng">
           &times;
         </button>
-
-        {isRegister ? (
-          <>
-            <h2 className="modal-title">Đăng ký</h2>
-            <p className="modal-subtitle">Tạo tài khoản mới để sử dụng dịch vụ.</p>
-            <form className="login-form" onSubmit={handleRegister}>
-              <div className="form-group">
-                <label htmlFor="reg-email">Email</label>
-                <input type="email" id="reg-email" placeholder="Nhập email" required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="reg-password">Mật khẩu</label>
-                <input type="password" id="reg-password" placeholder="Nhập mật khẩu" required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="reg-confirm">Xác nhận mật khẩu</label>
-                <input type="password" id="reg-confirm" placeholder="Nhập lại mật khẩu" required />
-              </div>
-              <button type="submit" className="login-button">Đăng ký</button>
-            </form>
-            <p className="signup-link">
-              Đã có tài khoản?{' '}
-              <button
-                type="button"
-                className="register-link"
-                style={{ background: 'none', border: 'none', color: '#1976d2', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}
-                onClick={() => setIsRegister(false)}
-              >
-                Đăng nhập
-              </button>
-            </p>
-          </>
-        ) : (
-          <>
-            <h2 className="modal-title">Đăng nhập</h2>
-            <p className="modal-subtitle">Chào mừng trở lại. Vui lòng nhập thông tin của bạn.</p>
-            <form className="login-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Nhập email của bạn"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="password">Mật khẩu</label>
-                <input
-                  type="password"
-                  id="password"
-                  placeholder="Nhập mật khẩu"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </div>
-              {error && <p className="error-message">{error}</p>}
-              <button type="submit" className="login-button" disabled={isLoading}>
-                {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-              </button>
-              <div className="form-options" style={{ marginTop: 12 }}>
-                <a href="#" className="forgot-password">Quên mật khẩu?</a>
-              </div>
-            </form>
-            <p className="signup-link">
-              Chưa có tài khoản?{' '}
-              <button
-                type="button"
-                className="register-link"
-                style={{ background: 'none', border: 'none', color: '#1976d2', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}
-                onClick={() => setIsRegister(true)}
-              >
-                Đăng ký ngay
-              </button>
-            </p>
-          </>
-        )}
+        <h2 className="modal-title">Đăng nhập</h2>
+        <p className="modal-subtitle">Chào mừng trở lại. Vui lòng nhập thông tin của bạn.</p>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Nhập email của bạn"
+              required
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Mật khẩu</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Nhập mật khẩu"
+              required
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+          {error && <p className="error-message">{error}</p>}
+          <button type="submit" className="login-button" disabled={isLoading}>
+            {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          </button>
+          <div className="form-options" style={{ marginTop: 12 }}>
+            <a href="#" className="forgot-password">Quên mật khẩu?</a>
+          </div>
+        </form>
+        <p className="signup-link">
+          Chưa có tài khoản?{' '}
+          <button
+            type="button"
+            className="register-link"
+            style={{ background: 'none', border: 'none', color: '#1976d2', textDecoration: 'underline', cursor: 'pointer', padding: 0, font: 'inherit' }}
+            onClick={() => setShowRegister(true)}
+          >
+            Đăng ký ngay
+          </button>
+        </p>
       </div>
     </div>
   );
