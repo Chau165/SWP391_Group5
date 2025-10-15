@@ -54,38 +54,33 @@ export default function Home() {
     setRouteLoading(false);
   };
 
-  // Hard-coded 25 station locations in Ho Chi Minh City
-  const stations = [
-    { id: 1, name: "Station 1", district: "District 1", coords: [106.660172, 10.762622] },
-    { id: 2, name: "Station 2", district: "District 3", coords: [106.700981, 10.776889] },
-    { id: 3, name: "Station 3", district: "District 5", coords: [106.682231, 10.762913] },
-    { id: 4, name: "Station 4", district: "District 7", coords: [106.629662, 10.823099] },
-    { id: 5, name: "Station 5", district: "District 9", coords: [106.800000, 10.870000] },
-    { id: 6, name: "Station 6", district: "District 1", coords: [106.660500, 10.770000] },
-    { id: 7, name: "Station 7", district: "District 2", coords: [106.715000, 10.780000] },
-    { id: 8, name: "Station 8", district: "District 3", coords: [106.680000, 10.765000] },
-    { id: 9, name: "Station 9", district: "District 4", coords: [106.690000, 10.770000] },
-    { id: 10, name: "Station 10", district: "District 5", coords: [106.695000, 10.775000] },
-    { id: 11, name: "Station 11", district: "District 6", coords: [106.700000, 10.780000] },
-    { id: 12, name: "Station 12", district: "District 7", coords: [106.705000, 10.785000] },
-    { id: 13, name: "Station 13", district: "District 8", coords: [106.710000, 10.790000] },
-    { id: 14, name: "Station 14", district: "District 9", coords: [106.715000, 10.795000] },
-    { id: 15, name: "Station 15", district: "District 10", coords: [106.720000, 10.800000] },
-    { id: 16, name: "Station 16", district: "District 11", coords: [106.725000, 10.805000] },
-    { id: 17, name: "Station 17", district: "District 12", coords: [106.730000, 10.810000] },
-    { id: 18, name: "Station 18", district: "Binh Thanh", coords: [106.735000, 10.815000] },
-    { id: 19, name: "Station 19", district: "Phu Nhuan", coords: [106.740000, 10.820000] },
-    { id: 20, name: "Station 20", district: "Go Vap", coords: [106.745000, 10.825000] },
-    { id: 21, name: "Station 21", district: "Tan Binh", coords: [106.750000, 10.830000] },
-    { id: 22, name: "Station 22", district: "Tan Phu", coords: [106.755000, 10.835000] },
-    { id: 23, name: "Station 23", district: "Binh Tan", coords: [106.760000, 10.840000] },
-    { id: 24, name: "Station 24", district: "Thu Duc", coords: [106.765000, 10.845000] },
-    { id: 25, name: "Station 25", district: "District 1", coords: [106.770000, 10.850000] }
-  ];
+  // Load stations from JSON file
+  const [stations, setStations] = useState([]);
+  const [stationsLoading, setStationsLoading] = useState(true);
+  const [stationsError, setStationsError] = useState("");
+
+  useEffect(() => {
+    setStationsLoading(true);
+    setStationsError("");
+    fetch("/src/data/stations.json")
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load stations.json");
+        return res.json();
+      })
+      .then(data => {
+        setStations(data);
+        setStationsLoading(false);
+      })
+      .catch(err => {
+        setStationsError("Failed to load stations: " + err.message);
+        setStationsLoading(false);
+      });
+  }, []);
 
   // Store marker and popup references by station name
   const markerRefs = useRef({});
   const popupRefs = useRef({});
+  // Initialize map only once
   useEffect(() => {
     mapboxgl.accessToken = MAPBOX_TOKEN;
     if (map.current) return;
@@ -95,8 +90,20 @@ export default function Home() {
       center: [106.660172, 10.762622],
       zoom: 12
     });
+    map.current.on('load', () => {
+      map.current.resize();
+    });
+  }, []);
 
+  // Add markers when stations are loaded
+  useEffect(() => {
+    if (!map.current || !stations.length) return;
+    // Remove old markers/popups
+    Object.values(markerRefs.current).forEach(marker => marker.remove && marker.remove());
+    markerRefs.current = {};
+    popupRefs.current = {};
     stations.forEach((station) => {
+      if (!station.coords) return;
       const el = document.createElement('div');
       el.className = 'custom-marker';
       el.style.backgroundImage = `url(${reactLogo})`;
@@ -108,9 +115,9 @@ export default function Home() {
       el.style.cursor = 'pointer';
       const popup = new mapboxgl.Popup({ offset: 25 })
         .setHTML(`
-          <div style="color: #111; font-size: 1.1em; font-weight: 600;">${station.name}</div>
-          <div style="margin-top: 6px; color: #333; font-size: 0.95em;">
-            Available battery: <span id="battery-${station.id}">Loading...</span>
+          <div style=\"color: #111; font-size: 1.1em; font-weight: 600;\">${station.name}</div>
+          <div style=\"margin-top: 6px; color: #333; font-size: 0.95em;\">
+            Available battery: <span id=\"battery-${station.id}\">Loading...</span>
           </div>
         `);
       const marker = new mapboxgl.Marker(el)
@@ -120,10 +127,7 @@ export default function Home() {
       markerRefs.current[station.name] = marker;
       popupRefs.current[station.name] = popup;
     });
-    map.current.on('load', () => {
-      map.current.resize();
-    });
-  }, []);
+  }, [stations]);
 
   // Effect: when selectedStation changes, zoom to it and open popup
   useEffect(() => {
@@ -210,12 +214,16 @@ export default function Home() {
       <div style={{ display: 'flex', height: '80vh', gap: '16px', padding: '24px' }}>
         {/* Left: Reservation Form (3 parts) */}
         <div style={{ flex: 3 }}>
-          <ReservationForm 
-            stations={stations}
-            selectedStation={selectedStation}
-            setSelectedStation={setSelectedStation}
-            onFindPath={handleFindPath}
-          />
+          {stationsLoading && <div>Loading stations...</div>}
+          {stationsError && <div style={{color:'red'}}>{stationsError}</div>}
+          {!stationsLoading && !stationsError && (
+            <ReservationForm 
+              stations={stations}
+              selectedStation={selectedStation}
+              setSelectedStation={setSelectedStation}
+              onFindPath={handleFindPath}
+            />
+          )}
           {routeLoading && <div style={{color:'#1976d2',marginTop:8}}>Finding route...</div>}
           {routeError && <div style={{color:'red',marginTop:8}}>{routeError}</div>}
         </div>
