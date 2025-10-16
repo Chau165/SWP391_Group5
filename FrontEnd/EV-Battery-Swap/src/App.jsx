@@ -8,7 +8,6 @@ import LoginModal from './components/Login/LoginModal';
 
 // Components Trang
 import Home from './pages/Home/Home';
-import AboutUs from './pages/About Us/AboutUs';
 import Battery from './pages/Battery Electric/Battery';
 import BatteryPin from './pages/Battery Electric/BatteryPin';
 import Polices from './pages/Polices/polices';
@@ -36,7 +35,6 @@ function App() {
       <main> 
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/about" element={<AboutUs />} />
             <Route path="/battery" element={<Battery />} /> 
             <Route path="/battery-pin" element={<BatteryPin />} />
             <Route path="/polices" element={<Polices />} />
