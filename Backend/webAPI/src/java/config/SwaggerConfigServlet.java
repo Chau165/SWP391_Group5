@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.System.out;
+import static java.sql.DriverManager.println;
 
 @WebServlet("/api/openapi.json")
 public class SwaggerConfigServlet extends HttpServlet {
@@ -186,6 +188,7 @@ public class SwaggerConfigServlet extends HttpServlet {
             out.println("          \"500\": { \"description\": \"Lỗi server\" }");
             out.println("        }");
             out.println("      }");
+            //<<<<<<< Updated .upstream = null
             out.println("    },");
 
             // ==== API Package Revenue Statistics ====
@@ -318,6 +321,8 @@ public class SwaggerConfigServlet extends HttpServlet {
             out.println("          \"500\": { \"description\": \"Lỗi server\" }");
             out.println("        }");
             out.println("      }");
+=======
+>>>>>>> Stashed changes
             out.println("    }");
 
             out.println("  }");
