@@ -36,7 +36,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
       // Đổi key fullName thành full_name để backend nhận đúng
       const payload = { fullName: fullName, phone, email, password };
       console.log('Register payload:', payload);
-      const response = await fetch('https://e8f2915decc6.ngrok-free.app/webAPI/api/register', {
+      const response = await fetch('https://03ba4f6fbe30.ngrok-free.app/webAPI/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
