@@ -14,6 +14,7 @@ import Polices from './pages/Polices/polices';
 import AdminDashboard from './pages/Dashboard/Admin/admin';
 import StaffDashboard from './pages/Dashboard/Staff/staff';
 import DriverDashboard from './pages/Dashboard/Driver/driver';
+import VehicleLink from './pages/Dashboard/Driver/vehicleLink/VehicleLink';
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false); 
   const [user, setUser] = useState(() => {
@@ -41,6 +42,7 @@ function App() {
             <Route path="/dashboard/admin" element={<AdminDashboard user={user} onLoginClick={handleOpenModal} />} />
             <Route path="/dashboard/staff" element={<StaffDashboard user={user} onLoginClick={handleOpenModal} />} />
             <Route path="/dashboard/driver" element={<DriverDashboard />} />
+            <Route path="/vehicle-link" element={<VehicleLink />} />
           </Routes>
       </main>
       <Footer />

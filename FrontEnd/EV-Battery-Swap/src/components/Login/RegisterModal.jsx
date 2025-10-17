@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
-import './RegisterModal.css';
+
+import API_BASE_URL from '../../config';
 
 export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
   const modalRef = useRef();
@@ -36,7 +37,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
       // Đổi key fullName thành full_name để backend nhận đúng
       const payload = { fullName: fullName, phone, email, password };
       console.log('Register payload:', payload);
-      const response = await fetch('https://03ba4f6fbe30.ngrok-free.app/webAPI/api/register', {
+  const response = await fetch(`${API_BASE_URL}/webAPI/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

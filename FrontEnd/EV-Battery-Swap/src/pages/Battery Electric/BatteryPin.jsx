@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './BatteryPin.css';
+
+// Đăng ký plugin ScrollTrigger với GSAP một lần duy nhất
+gsap.registerPlugin(ScrollTrigger);
+
 
 
 export default function BatteryPin() {
@@ -15,6 +22,77 @@ export default function BatteryPin() {
     setIsModalOpen(false);
     setSelectedBatteryIndex(null);
   };
+
+  // --- Thêm các Ref cần thiết cho animation ---
+  const canvasRef = useRef(null);
+  const sectionRef = useRef(null); // Ref cho section "Power Packed"
+
+  // --- Logic cho animation cuộn trang ---
+  useEffect(() => {
+    // Chỉ lấy các ảnh pin, không lấy ảnh xe máy
+    // Đảm bảo chỉ vẽ các ảnh sequence-gn-battery-03.jpg đến 50.jpg
+    const frameFiles = Array.from({length: 48}, (_, i) => `/pin/sequence-gn-battery-${String(i+3).padStart(2, '0')}.jpg`);
+    const imageCache = [];
+    frameFiles.forEach(src => {
+      const img = new window.Image();
+      img.src = src;
+      imageCache.push(img);
+    });
+    const frameCount = frameFiles.length;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext('2d');
+    // Đặt kích thước canvas phù hợp với ảnh (có thể điều chỉnh lại nếu ảnh khác size)
+  canvas.width = 800;
+  canvas.height = 900;
+    // Vẽ ảnh đầu tiên lên canvas ngay khi nó tải xong
+    imageCache[0].onload = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+  // Vẽ ảnh căn giữa, giữ tỉ lệ và zoom lớn hơn
+  const img = imageCache[0];
+  const zoom = 1.5; // Zoom lớn hơn 1.5 lần
+  const scale = Math.min(canvas.width / img.width, canvas.height / img.height) * zoom;
+  const x = (canvas.width - img.width * scale) / 2;
+  const y = (canvas.height - img.height * scale) / 2;
+  context.drawImage(img, x, y, img.width * scale, img.height * scale);
+    };
+    let lastFrame = 0;
+    const frameData = { frame: 0 };
+    // Thiết lập animation với GSAP
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=3000',
+        scrub: 0.3, // scrub nhỏ hơn để animation mượt hơn
+        pin: true,
+      },
+    });
+    tl.to(frameData, {
+      frame: frameCount - 1,
+      ease: 'none',
+      onUpdate: () => {
+        // Lerp để chuyển đổi frame mượt hơn
+        lastFrame += (frameData.frame - lastFrame) * 0.25;
+        const frameIndex = Math.round(lastFrame);
+        const currentImg = imageCache[frameIndex];
+        if (currentImg && currentImg.complete) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          // Vẽ ảnh căn giữa, giữ tỉ lệ và zoom lớn hơn
+          const zoom = 2;
+          const scale = Math.min(canvas.width / currentImg.width, canvas.height / currentImg.height) * zoom;
+          const x = (canvas.width - currentImg.width * scale) / 2;
+          const y = (canvas.height - currentImg.height * scale) / 2;
+          context.drawImage(currentImg, x, y, currentImg.width * scale, currentImg.height * scale);
+        }
+      },
+    });
+    return () => {
+      if (tl.scrollTrigger) {
+        tl.scrollTrigger.kill();
+      }
+    };
+  }, []);
 
   return (
     <div className="battery-pin-page">
@@ -85,15 +163,18 @@ export default function BatteryPin() {
         />
       </section>
 
-      {/* Section pin nổi bật */}
-      <section className="battery-pin-highlight">
-      <h2 className="bph-title">Power Packed.</h2>
-      <p className="bph-desc">
-        Super simple, ultra-smart, ready to go.<br />
-        This is on-demand electric fuel for<br />
-        a new generation of smart vehicles.
-      </p>
-    </section>
+      {/* Section pin nổi bật với animation cuộn ảnh */}
+      <section ref={sectionRef} className="battery-pin-highlight">
+        <div className="bph-text-content">
+          <h2 className="bph-title">Power Packed.</h2>
+        </div>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
+          <canvas ref={canvasRef} className="bph-canvas" style={{display: 'block', margin: '32px auto 0 auto', maxWidth: '700px', width: '100%', height: 'auto', background: 'none'}}></canvas>
+        </div>
+      </section>
+
+      {/* Section trống để có không gian cuộn */}
+      <div style={{ height: '100vh', background: '#fff' }}></div>
     </div>
     
   );
