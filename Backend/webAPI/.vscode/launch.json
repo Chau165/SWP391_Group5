@@ -1,0 +1,22 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch Java App",
+      "request": "launch",
+      "mainClass": "config.SwaggerConfigServlet",
+      "projectName": "webAPI1"
+    },
+    {
+      "type": "java",
+      "name": "Attach to Tomcat",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": "8000"
+    }
+  ]
+}
