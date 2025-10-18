@@ -83,7 +83,7 @@ function Battery() {
 
       {/* GIỚI THIỆU VỀ GIẢI PHÁP */}
       <section className="intro-section">
-        <h2>ABOUT THE SOLUTION</h2>
+        <h2>GIỚI THIỆU GIẢI PHÁP</h2>
         <div className="intro-cards">
           <IntroCard
             img="/img-battery3.jpg"
@@ -109,7 +109,7 @@ function Battery() {
 
       {/* PROJECT SECTION - BỐ CỤC ẢNH 50% - TEXT 50% */}
   <section className="project-section-single" id="project-section-single">
-        <h2>THE MOST ADVANCED ENERGY PLATFORM FOR ELECTRIC VEHICLE</h2>
+        <h2>NỀN TẢNG NĂNG LƯỢNG TIÊN TIẾN NHẤT CHO XE ĐIỆN</h2>
 
         <div className="project-card-gogoro">
           {/* THẺ DỰ ÁN 1: ẢNH TRÁI - TEXT PHẢI (Giống Gogoro Smart Batteries) */}
@@ -152,7 +152,7 @@ function Battery() {
 
       {/* TẠI SAO CHỌN GIẢI PHÁP CỦA CHÚNG TÔI */}
       <section className="intro-section">
-        <h2>WHY CHOOSE OUR SOLUTION?</h2>
+        <h2>VÌ SAO LỰA CHỌN GIẢI PHÁP CỦA CHÚNG TÔI</h2>
         <div className="intro-cards-sumary">
           <div className="card-sumary">
             <img src="/img-batte.jpg" alt="Pin cho xe điện" />
@@ -160,24 +160,21 @@ function Battery() {
 
           <div className="sumary-text-chung">
             <div className="sumary-text-1">
-              <h3 className="text">CONVENIENCE</h3>
+              <h3 className="text">SỰ TIỆN LỢI</h3>
               <p>
-                GoStation Sites use less space than a parking spot and are quick and easy to install in a wide range of sites. A single location can serve hundreds of swaps a day without waiting.
-              </p>
+Các điểm đổi pin EV sử dụng ít diện tích hơn so với chỗ đỗ xe và lắp đặt nhanh chóng, dễ dàng tại nhiều địa điểm khác nhau. Chỉ cần một điểm đổi pin, bạn có thể phục vụ hàng trăm lượt đổi pin mỗi ngày mà không cần chờ đợi.              </p>
             </div>
 
             <div className="sumary-text-1">
-              <h3 className="text">Easy to Operate</h3>
+              <h3 className="text">DỄ VẬN HÀNH</h3>
               <p>
-                Weather proof. Tamper proof. Low maintenance. 24hr monitoring, remote updates and automatic safety measures deliver 99% uptime.
-              </p>
+Chống chịu thời tiết. Chống phá hoại. Ít bảo trì. Giám sát 24 giờ, cập nhật từ xa và các biện pháp an toàn tự động mang lại thời gian hoạt động 99%.              </p>
             </div>
 
             <div className="sumary-text-1">
-              <h3 className="text">Built to Last</h3>
+              <h3 className="text">XÂY DỰNG ĐỂ TRƯỜNG TỒN</h3>
               <p>
-                Rugged design, future-proof technology and continual updates. Engineered for reliability in the most demanding urban environments. Swap after swap, year after year.
-              </p>
+Thiết kế chắc chắn, công nghệ tiên tiến và cập nhật liên tục. Được thiết kế để đảm bảo độ tin cậy trong những môi trường đô thị khắc nghiệt nhất. Thay thế liên tục, năm này qua năm khác.              </p>
             </div>
           </div>
         </div>
@@ -198,8 +195,7 @@ function Battery() {
           <div className="eyebrow">SMART &amp; CONNECTED</div>
           <h2 className="video-title">Thinking ahead.</h2>
           <p className="video-desc">
-            SmartGEN is our cloud‑connected nerve center. Its AI is constantly learning from riding patterns and swap behavior to anticipate when and where full batteries will be needed. By intelligently distributing energy we keep hundreds of thousands of riders moving swiftly on their way.
-          </p>
+SmartGEN là trung tâm thần kinh kết nối đám mây của chúng tôi. Trí tuệ nhân tạo (AI) của nó liên tục học hỏi từ các kiểu lái xe và hành vi thay đổi để dự đoán thời điểm và địa điểm cần pin đầy. Bằng cách phân phối năng lượng thông minh, chúng tôi giúp hàng trăm nghìn người lái xe di chuyển nhanh chóng trên đường đi.          </p>
         </div>
       </section>
 

@@ -29,9 +29,9 @@ export default function BatteryPin() {
 
   // --- Logic cho animation cuộn trang ---
   useEffect(() => {
-    // Chỉ lấy các ảnh pin, không lấy ảnh xe máy
-    // Đảm bảo chỉ vẽ các ảnh sequence-gn-battery-03.jpg đến 50.jpg
-    const frameFiles = Array.from({length: 48}, (_, i) => `/pin/sequence-gn-battery-${String(i+3).padStart(2, '0')}.jpg`);
+  // Chỉ lấy các ảnh pin, không lấy ảnh xe máy
+  // Đảm bảo chỉ vẽ các ảnh sequence-gn-battery-01.jpg đến 50.jpg
+  const frameFiles = Array.from({length: 50}, (_, i) => `/pin/sequence-gn-battery-${String(i+1).padStart(2, '0')}.jpg`);
     const imageCache = [];
     frameFiles.forEach(src => {
       const img = new window.Image();
@@ -63,7 +63,7 @@ export default function BatteryPin() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=3000',
+        end: '+=1500', // Giảm chiều dài cuộn để animation diễn ra nhanh hơn
         scrub: 0.3, // scrub nhỏ hơn để animation mượt hơn
         pin: true,
       },
@@ -174,7 +174,11 @@ export default function BatteryPin() {
       </section>
 
       {/* Section trống để có không gian cuộn */}
-      <div style={{ height: '100vh', background: '#fff' }}></div>
+      <div style={{ height: '100vh', background: '#fff' }}>
+        <h2>
+          ádasda
+        </h2>
+      </div>
     </div>
     
   );

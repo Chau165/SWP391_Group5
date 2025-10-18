@@ -22,7 +22,7 @@ function BatteryDropdown({ show, onEnter, onLeave, isActive }) {
       onMouseLeave={onLeave}
     >
       <span className={`nav-link dropdown-trigger ${isActive ? 'active' : ''}`}>
-        Battery Electric
+        Pin và trạm sạc
         <svg className="dropdown-arrow" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
@@ -33,13 +33,13 @@ function BatteryDropdown({ show, onEnter, onLeave, isActive }) {
             to="/battery" 
             className={`dropdown-item ${isActive === '/battery' ? 'active' : ''}`}
           >
-            Battery Swap
+            Trạm đổi pin
           </Link>
           <Link 
             to="/battery-pin" 
             className={`dropdown-item ${isActive === '/battery-pin' ? 'active' : ''}`}
           >
-            Battery Pin
+            Công nghệ pin
           </Link>
         </div>
       )}
@@ -55,7 +55,7 @@ function Navigation({ isActive, isBatteryActive, showBatteryDropdown, setShowBat
         to="/" 
         className={`nav-link ${isActive('/') ? 'active' : ''}`}
       >
-        Home
+        Trang Chủ
       </Link>
       <BatteryDropdown 
         show={showBatteryDropdown}
@@ -67,7 +67,7 @@ function Navigation({ isActive, isBatteryActive, showBatteryDropdown, setShowBat
         to="/polices" 
         className={`nav-link ${isActive('/polices') ? 'active' : ''}`}
       >
-        Polices
+        Chính sách
       </Link>
     </nav>
   );
@@ -84,7 +84,7 @@ function LoginButton({ onLoginClick }) {
         onLoginClick();
       }}
     >
-      Login
+      Đăng Nhập
     </a>
   );
 }
