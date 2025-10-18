@@ -205,11 +205,15 @@ export default function Home() {
           height: '100%',
           objectFit: 'cover',
           display: 'block',
-          background: '#000'
         }}
       >
         <source src="/promo.mp4" type="video/mp4" />
       </video>
+   <img 
+        src="/homemap.jpg" 
+        alt="Sơ đồ các trạm" 
+        style={{ width: '100%', height: 'auto', display: 'block' }} 
+      />   
 {/* Layout: Left (3 parts) - Right (7 parts)*/}
       <div style={{ display: 'flex', height: '80vh', gap: '16px', padding: '24px' }}>
         {/* Left: Reservation Form (3 parts) */}
